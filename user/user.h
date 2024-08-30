@@ -1,4 +1,5 @@
 struct stat;
+typedef unsigned int uint;
 
 // system calls
 int fork(void);
@@ -10,7 +11,7 @@ int read(int, void*, int);
 int close(int);
 int kill(int);
 int exec(const char*, char**);
-int open(const char*, int);
+//int open(const char*, int);
 int mknod(const char*, short, short);
 int unlink(const char*);
 int fstat(int fd, struct stat*);
@@ -22,6 +23,11 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+
+int open(const char *pathname, int flags, ...);
+int getppid(void); 
+int getancestor(int n);
+
 
 // ulib.c
 int stat(const char*, struct stat*);
