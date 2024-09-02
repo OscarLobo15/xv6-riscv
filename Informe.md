@@ -25,9 +25,9 @@
 - **Archivo usys.pl**: Se debieron agregar las entradas para las nuevas llamadas al sistema getppid y getancestor en el script, de manera que se generen los stubs correspondientes en usys.S.
 
 
-- **Archivo test.c**: Se creo este archivo en donde se ejecuta el programa, este programa obtiene el ID del proceso padre utilizando getppid() y luego obtiene los ancestros (yo mismo, padre y abuelo) utilizando getancestor(). Imprime esta información y luego sale con un código de salida exitoso.
+- **Archivo yosoytupadre.c**: Se creo este archivo en donde se ejecuta el programa, este programa obtiene el ID del proceso padre utilizando getppid() y luego obtiene los ancestros (yo mismo, padre y abuelo) utilizando getancestor(). Imprime esta información y luego sale con un código de salida exitoso.
 
-- **Archivo Makefile**: Se tuvo que añadir el nuevo archivo (test), en el cual se ejecuta el programa.
+- **Archivo Makefile**: Se tuvo que añadir el nuevo archivo (yosoytupadre.c), en el cual se ejecuta el programa.
 
 
 
