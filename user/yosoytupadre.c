@@ -3,6 +3,7 @@
 
 int main(int argc, char *argv[]) {
     int ppid = getppid();
+    
     printf("El ID del proceso padre es: %d\n", ppid);  // Cambié el primer argumento a una cadena
 
     for (int i = 0; i < 3; i++) {

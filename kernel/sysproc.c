@@ -92,30 +92,39 @@ sys_uptime(void)
 }
 
 // Implementación de getppid
-uint64
-sys_getppid(void) {
+uint64 sys_getppid(void) {
     return myproc()->parent ? myproc()->parent->pid : -1;  // Retorna el PID del proceso padre o -1 si no tiene padre
 }
 
-// Función que maneja la lógica de ancestros
+// Función para obtener el ancestro
 int getancestor(int n) {
-    struct proc *p = myproc();
-    
+    struct proc *p = myproc(); // Obtiene el proceso actual
+
+    // Debug: imprime el PID del proceso actual
+    //printf("Proceso actual PID: %d\n", p->pid); // Usa printf en lugar de cprintf
+
+    // Si n es 0, retorna el ID del proceso actual
     if (n == 0) {
-        return p->pid;  // Retorna el mismo proceso
-    } else if (n == 1 && p->parent) {
-        return p->parent->pid;  // Retorna el padre
-    } else if (n == 2 && p->parent && p->parent->parent) {
-        return p->parent->parent->pid;  // Retorna el abuelo
-    } else {
-        return -1;  // Retorna -1 si no hay ancestro
+        return p->pid; // Asegúrate de que esto retorne el PID correcto
     }
+
+    // Navega a través de los padres
+    for (int i = 1; i <= n; i++) {
+        if (p->parent == 0) {
+            return -1; // No hay ancestro
+        }
+        p = p->parent; // Mueve al proceso padre
+    }
+    return p->pid; // Retorna el ID del ancestro
 }
 
 // Implementación de getancestor
-uint64
-sys_getancestor(void) {
+uint64 sys_getancestor(void) {
     int n;
-    argint(0, &n); // Asigna el argumento a n directamente
-    return getancestor(n); // Llama a la función que maneja la lógica de ancestros
+    argint(0, &n);
+    if (n < 0) { // Verifica el retorno de argint()
+        return -1; // Manejo de errores si no se puede obtener el argumento
+    }
+    //printf("Valor de n: %d\n", n); // Debug: imprime el valor de n
+    return getancestor(n); // Llama a la función getancestor
 }
