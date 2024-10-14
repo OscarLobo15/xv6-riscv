@@ -104,4 +104,8 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  
+  // Nuevos campos para prioridad y boost
+  int priority;                // Prioridad del proceso (menor número = mayor prioridad)
+  int boost;                   // Valor del boost para ajustar la prioridad
 };

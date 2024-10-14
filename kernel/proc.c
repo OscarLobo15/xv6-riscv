@@ -7,9 +7,7 @@
 #include "defs.h"
 
 struct cpu cpus[NCPU];
-
 struct proc proc[NPROC];
-
 struct proc *initproc;
 
 int nextpid = 1;
@@ -124,6 +122,10 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+
+  // Modificación: Inicializar prioridad y boost
+  p->priority = 0;  // Inicializar prioridad en 0 (máxima prioridad)
+  p->boost = 1;     // Inicializar boost en 1
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -446,36 +448,40 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-
   c->proc = 0;
+
   for(;;){
-    // The most recent process to run may have had interrupts
-    // turned off; enable them to avoid a deadlock if all
-    // processes are waiting.
+    // Evita interrupciones
     intr_on();
 
-    int found = 0;
-    for(p = proc; p < &proc[NPROC]; p++) {
+    // Recorre la lista de procesos
+    for(p = proc; p < &proc[NPROC]; p++){
       acquire(&p->lock);
-      if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
+
+      if(p->state == RUNNABLE){
+
+        // Aumenta la prioridad del proceso según su boost
+        p->priority += p->boost;
+
+        // Si la prioridad llega a 9, cambia el boost a -1
+        if(p->priority >= 9) {
+          p->priority = 9;
+          p->boost = -1;
+        }
+        // Si la prioridad llega a 0, cambia el boost a 1
+        else if(p->priority <= 0) {
+          p->priority = 0;
+          p->boost = 1;
+        }
+
+        // Ejecuta el proceso
         p->state = RUNNING;
         c->proc = p;
-        swtch(&c->context, &p->context);
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
+        swtch(&c->context, &p->context);  // Cambio aquí
         c->proc = 0;
-        found = 1;
+
       }
       release(&p->lock);
-    }
-    if(found == 0) {
-      // nothing to run; stop running on this core until an interrupt.
-      intr_on();
-      asm volatile("wfi");
     }
   }
 }
@@ -517,6 +523,7 @@ yield(void)
   sched();
   release(&p->lock);
 }
+
 
 // A fork child's very first scheduling by scheduler()
 // will swtch to forkret.
