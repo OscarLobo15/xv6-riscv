@@ -13,16 +13,16 @@ int main() {
         printf("mprotect fue exitoso\n");
     }
 
-    // Quitar la protección de solo lectura con munprotect antes de la escritura
+    // Quitar la protección de solo lectura con munprotect antes de la escritura (si se borra esta parte, deberia fallar lo que sigue)
     if (munprotect(addr, 1) == -1) {
         printf("munprotect falló\n");
     } else {
         printf("munprotect fue desactivado\n");
     }
 
-    // Intentar escribir en la página protegida (esto debería ser exitoso ahora)
+    // Intentar escribir en la página protegida 
     char *ptr = addr;
-    *ptr = 'A';  // Esto ya no debería causar una trampa
+    *ptr = 'A';  
     printf("Escritura después de munprotect exitosa, valor en la dirección: %c\n", *ptr);
 
     // Intentar escribir en la página nuevamente para verificar
