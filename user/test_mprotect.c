@@ -13,8 +13,8 @@ int main() {
         printf("mprotect fue exitoso\n");
     }
 
-    // Quitar la protección de solo lectura con munprotect antes de la escritura (si se borra esta parte, deberia fallar lo que sigue)
-    if (munprotect(addr, 1) == -1) {
+     // Quitar la protección de solo lectura con munprotect antes de la escritura (si se borra esta parte, deberia fallar lo que sigue)
+  if (munprotect(addr, 1) == -1) {
         printf("munprotect falló\n");
     } else {
         printf("munprotect fue desactivado\n");
